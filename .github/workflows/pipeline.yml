@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Test SSH Connection
-        uses: appleboy/ssh-action@v0.1.5
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up SSH
-        uses: appleboy/ssh-action@v0.1.5
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}  # Server public IP or DNS
           username: ${{ secrets.EC2_USER }}  # Server user
