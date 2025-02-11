@@ -46,7 +46,7 @@ jobs:
   # This job runs and deploys code only when PR is merged into main
   deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'  # Ensures deployment runs only when a PR is merged
+    if: github.event_name == 'closed'  # Ensures deployment runs only when a PR is merged
     needs: test  # Deploy only runs after the tests are successful
     steps:
       - name: Checkout Code
