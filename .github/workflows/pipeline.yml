@@ -47,16 +47,32 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Set up SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}  # Server public IP or DNS
-          username: ${{ secrets.EC2_USER }}  # Server user
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # SSH private key stored in GitHub secrets
+#      - name: Set up SSH
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.EC2_HOST }}  # Server public IP or DNS
+#          username: ${{ secrets.EC2_USER }}  # Server user
+#          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # SSH private key stored in GitHub secrets
+#
+#      - name: Pull latest code and restart app on EC2
+#        run: |
+#          ssh -i ${{ secrets.EC2_SSH_PRIVATE_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+#            cd /home/ubuntu/HNGProjects/fastapi-book-project
+#            git pull origin main
+#            docker-compose down
+#            docker-compose up -d
+#          EOF
+
+      - name: Set up SSH key for EC2 access
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Pull latest code and restart app on EC2
         run: |
-          ssh -i ${{ secrets.EC2_SSH_PRIVATE_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd /home/ubuntu/HNGProjects/fastapi-book-project
             git pull origin main
             docker-compose down
