@@ -8,7 +8,6 @@ on:
       - closed
 
 jobs:
-  if: github.event.pull_request.merged == true
   runs-on: ubuntu-latest
   needs: test  # Deploy only runs after the tests are successful
   steps:
