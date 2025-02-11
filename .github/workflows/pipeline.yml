@@ -77,6 +77,6 @@ jobs:
             git config --global --add safe.directory /home/ubuntu/HNGProjects/fastapi-book-project
             cd /home/ubuntu/HNGProjects/fastapi-book-project
             git pull origin main
-            docker-compose down
-            docker-compose up -d
+#            docker-compose down
+#            docker-compose up -d
           EOF
