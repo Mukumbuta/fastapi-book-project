@@ -39,13 +39,14 @@ jobs:
         run: |
           pytest tests/ --exitfirst --disable-warnings
 
-  auto-merge:
-    needs: test  # Only run if tests pass
+  automerge:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - name: Auto-Merge PR
-        uses: pascalgn/automerge-action@v0.15.6
-        with:
-          github-token: ${{ secrets.GITHUB_PAT }}
-          merge-method: merge
-          required-status-checks: "test"  # Only merge if tests pass
+      - id: automerge
+        name: automerge
+        uses: "pascalgn/automerge-action@v0.16.4"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_PAT }}"
