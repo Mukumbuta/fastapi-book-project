@@ -1,28 +1,25 @@
-name: CD Pipeline for FastAPI Application
+name: Deploy Project
 
 on:
-  pull_request:
+  push:
     branches:
       - main
-    types:
-      - closed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true  # Ensures it only runs when PR is merged
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Set up SSH key for EC2 access
+      - name: Set up SSH keys
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Pull latest code and restart app on EC2
+      - name: Pull latest code and restart app on the server
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd /home/ubuntu/HNGProjects/fastapi-book-project
@@ -31,4 +28,3 @@ jobs:
             docker-compose down
             docker-compose up -d --build
           EOF
-
