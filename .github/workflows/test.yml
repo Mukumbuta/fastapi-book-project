@@ -46,7 +46,6 @@ jobs:
       - name: Auto-Merge PR
         uses: pascalgn/automerge-action@v0.15.6
         with:
-#          github-token: ${{ secrets.GITHUB_TOKEN }}
           merge-method: merge
           required-status-checks: "test"  # Only merge if tests pass
 
