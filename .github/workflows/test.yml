@@ -39,14 +39,38 @@ jobs:
         run: |
           pytest tests/ --exitfirst --disable-warnings
 
+#  automerge:
+#    runs-on: ubuntu-latest
+#    permissions:
+#      contents: write
+#      pull-requests: write
+#    steps:
+#      - id: automerge
+#        name: automerge
+#        uses: "pascalgn/automerge-action@v0.16.4"
+#        env:
+#          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
   automerge:
     runs-on: ubuntu-latest
+    needs: tests  # Ensures automerge only runs if 'tests' job passes
+    if: success() # Only runs if all previous jobs (tests) succeed
     permissions:
       contents: write
       pull-requests: write
     steps:
+      - name: Add "automerge" Label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: automerge
+
       - id: automerge
-        name: automerge
+        name: Automerge PR
         uses: "pascalgn/automerge-action@v0.16.4"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          merge-method: merge  # Options: 'merge', 'squash', 'rebase'
+          labels: "automerge"  # Ensures PR has this label before merging
+          required-status-checks: "tests"  # Ensures 'tests' job passed before merging
